@@ -3,9 +3,11 @@ package com.pepperdata;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
@@ -63,6 +65,7 @@ public class BulkWrite {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return;
     }
 
     private static Label.Builder getLable(String name, String value) {
@@ -97,6 +100,13 @@ public class BulkWrite {
         try {
             client.WriteProto(writeRequest.build());
         } catch (IOException e) {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+                System.out.println("Repeat" + " " + sample.getTimestamp());
+                BulkWrite.writeToM3DB(client, labels, sample);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
     }
