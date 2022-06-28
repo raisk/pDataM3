@@ -34,6 +34,7 @@ public class BulkWrite {
 
                 ArrayList<Label.Builder> labels = new ArrayList<>();
                 labels.add(BulkWrite.getLable("__name__", "bulkdata"));
+                labels.add(BulkWrite.getLable("type", dataType));
 
                 for (Object key : tags.keySet()) {
                     String value = (String) tags.get(key);
@@ -51,6 +52,7 @@ public class BulkWrite {
                     System.out.println(dTime);
                     System.out.println(dValue);
                     BulkWrite.writeToM3DB(client, labels, sample);
+                    return;
                 }
 
                 System.out.println(ind + " " + metric);
@@ -107,6 +109,6 @@ public class BulkWrite {
 
         // BulkWrite.processHistoricalData(client, "static/node_cpu.json", "cpu");
         // BulkWrite.processHistoricalData(client, "static/node_memory.json", "memory");
-        BulkWrite.processHistoricalData(client, "static/node.loadavgStat.fiveMinute-2022-06-26-00", "cpu");
+        BulkWrite.processHistoricalData(client, "static/node.loadavgStat.fiveMinute-2022-06-26-00", "load");
     }
 }

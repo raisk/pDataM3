@@ -52,3 +52,14 @@ protobuf {
         artifact = 'com.google.protobuf:protoc:3.0.0'
     }
 }
+
+ext {
+   javaMainClass = "com.pepperdata.BulkWrite"
+}
+
+task runWithJavaExec(type: JavaExec) {
+    group = "Execution"
+    description = "Run the BulkWrite class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = javaMainClass
+}
