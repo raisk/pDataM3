@@ -17,7 +17,7 @@ import com.uber.m3.promremoteclient.Prometheus.Label;
 import com.uber.m3.promremoteclient.Prometheus.Sample;
 
 public class BulkWrite {
-    static String write_url = "http://3.84.95.36:7201/api/v1/prom/remote/write";
+    static String write_url = "http://localhost:7201/api/v1/prom/remote/write";
 
     private static void processHistoricalData(Client client, String filename, String dataType) {
         JSONParser jsonParser = new JSONParser();
@@ -49,10 +49,7 @@ public class BulkWrite {
 
                     Sample.Builder sample = BulkWrite.getSample(dTime, dValue);
 
-                    System.out.println(dTime);
-                    System.out.println(dValue);
                     BulkWrite.writeToM3DB(client, labels, sample);
-                    return;
                 }
 
                 System.out.println(ind + " " + metric);
@@ -107,8 +104,8 @@ public class BulkWrite {
     public static void main(String[] args) {
         Client client = new Client(write_url);
 
-        // BulkWrite.processHistoricalData(client, "static/node_cpu.json", "cpu");
-        // BulkWrite.processHistoricalData(client, "static/node_memory.json", "memory");
         BulkWrite.processHistoricalData(client, "static/node.loadavgStat.fiveMinute-2022-06-26-00", "load");
+        BulkWrite.processHistoricalData(client, "static/node.loadavgStat.fiveMinute-2022-06-26-01", "load");
+        BulkWrite.processHistoricalData(client, "static/node.loadavgStat.fiveMinute-2022-06-26-02", "load");
     }
 }
