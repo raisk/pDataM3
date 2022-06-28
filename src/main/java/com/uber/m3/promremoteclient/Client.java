@@ -22,6 +22,7 @@ package com.uber.m3.promremoteclient;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.RequestBody;
 import okhttp3.Request;
 import okhttp3.MediaType;
@@ -59,4 +60,25 @@ public class Client {
         }
     }
 
+    public ResponseBody ReadProto(Prometheus.ReadRequest req) throws IOException {
+        byte[] compressed = Snappy.compress(req.toByteArray());
+        MediaType mediaType = MediaType.parse("application/x-protobuf");
+        RequestBody body = RequestBody.create(mediaType, compressed);
+        Request request = new Request.Builder()
+            .url(writeUrl)
+            .addHeader("Content-Encoding", "snappy")
+            .addHeader("User-Agent", "promremote-java/0.1.0")
+            .addHeader("X-Prometheus-Remote-Write-Version", "0.1.0")
+            .post(body)
+            .build();
+        Response response = client.newCall(request).execute();
+
+        System.out.println(response);
+        if (response.code() != 200) {
+            throw new IOException(
+                "expected 200 status code: actual=" + String.valueOf(response.code()) + ", " +
+                "body=" + response.message());
+        }
+        return response.body();
+    }
 }
