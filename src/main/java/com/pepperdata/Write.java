@@ -16,7 +16,7 @@ import com.uber.m3.promremoteclient.Prometheus.Label;
 import com.uber.m3.promremoteclient.Prometheus.Sample;
 
 public class Write {
-    static String write_url = "http://34.207.66.31:7201/api/v1/prom/remote/write";
+    static String write_url = "http://44.206.225.235:7201/api/v1/prom/remote/write";
 
     private static void processHistoricalData(Client client, String filename, String dataType) {
         JSONParser jsonParser = new JSONParser();

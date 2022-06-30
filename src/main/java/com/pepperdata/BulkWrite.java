@@ -96,6 +96,8 @@ class Writer extends Thread {
 
             this.writeToM3DB(labels, sample);
         }
+
+        System.out.println("Completed" + " " + (String) tags.get("host"));
     }
 
     public void run() {
@@ -125,10 +127,17 @@ public class BulkWrite {
                     .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / chunkSize))
                     .values();
 
+            Writer[] threads = new Writer[10];
+            int i = 0;
             for (List<JSONObject> seriesL : result) {
                 System.out.println(seriesL.size());
-                Writer writerThread = new Writer(seriesL, dataType);
-                writerThread.start();
+                threads[i] = new Writer(seriesL, dataType);
+                threads[i].start();
+                i++;
+            }
+
+            for (Writer thread : threads) {
+                thread.join();
             }
 
         } catch (FileNotFoundException e) {
@@ -136,6 +145,9 @@ public class BulkWrite {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return;

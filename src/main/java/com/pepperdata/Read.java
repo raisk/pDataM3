@@ -24,7 +24,7 @@ import com.uber.m3.promremoteclient.Prometheus.Sample;
 
 public class Read {
     static long ML_SECOND = 60000;
-    static String read_url = "http://34.207.66.31:7201/api/v1/prom/remote/read";
+    static String read_url = "http://44.206.225.235:7201/api/v1/prom/remote/read";
 
     public static void main(String[] args) {
         Client client = new Client(read_url);
