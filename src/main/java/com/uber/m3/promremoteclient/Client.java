@@ -53,10 +53,15 @@ public class Client {
             .post(body)
             .build();
         Response response = client.newCall(request).execute();
+        
         if (response.code() != 200) {
             throw new IOException(
                 "expected 200 status code: actual=" + String.valueOf(response.code()) + ", " +
                 "body=" + response.message());
+        }
+
+        if (response != null && response.body() != null) {
+            response.body().close();
         }
     }
 
