@@ -1,5 +1,6 @@
 package com.pepperdata;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -108,9 +109,11 @@ class Writer extends Thread {
 }
 
 public class BulkWrite {
-    private static void processHistoricalData(String filename, String dataType) {
+    public static String dataDir = "static/data";
+
+    private static void processHistoricalData(String filePath, String dataType) {
         JSONParser jsonParser = new JSONParser();
-        try (FileReader reader = new FileReader(filename)) {
+        try (FileReader reader = new FileReader(filePath)) {
             JSONArray allSeries = (JSONArray) jsonParser.parse(reader);
 
             List<JSONObject> seriesList = new ArrayList<JSONObject>();
@@ -154,8 +157,23 @@ public class BulkWrite {
     }
 
     public static void main(String[] args) {
-        BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-00", "load");
-        BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-01", "load");
-        BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-02", "load");
+        File directoryPath = new File(BulkWrite.dataDir);
+        File filesList[] = directoryPath.listFiles();
+
+        System.out.println("Total files:" + filesList.length);
+
+        for (File file : filesList) {
+            System.out.println("File path: " + file.getAbsolutePath());
+            String fileName = file.getName();
+            String dataType = fileName.toLowerCase().contains("load") ? "load" : "average";
+            BulkWrite.processHistoricalData(file.getAbsolutePath(), dataType);
+        }
+
+        // BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-00",
+        // "load");
+        // BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-01",
+        // "load");
+        // BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-02",
+        // "load");
     }
 }
