@@ -5,14 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
@@ -69,7 +64,7 @@ class Writer2 extends Thread {
 
 public class BulkWrite2 {
     public static String dataDir = "static/data";
-    static String writerUrl = "http://localhost:7201/api/v1/prom/remote/write";
+    static String writerUrl = "http://127.0.0.1:7201/api/v1/prom/remote/write";
 
     private static Label.Builder getLable(String name, String value) {
         Label.Builder lable = Label.newBuilder();
@@ -123,6 +118,10 @@ public class BulkWrite2 {
                 System.out.println("Completed" + " " + (String) tags.get("host"));
             }
 
+            while(!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                Thread.sleep(5000);
+            }
+
             executor.shutdown();
 
         } catch (FileNotFoundException e) {
@@ -130,6 +129,9 @@ public class BulkWrite2 {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -150,7 +152,7 @@ public class BulkWrite2 {
             String dataType = fileName.toLowerCase().contains("load") ? "load" : "average";
             BulkWrite2.processHistoricalData(client, file.getAbsolutePath(), dataType);
 
-            file.delete();
+            // file.delete();
         }
 
         // BulkWrite2.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-00",
