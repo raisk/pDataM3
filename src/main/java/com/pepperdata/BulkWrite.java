@@ -129,11 +129,10 @@ public class BulkWrite {
             final Collection<List<JSONObject>> result = seriesList.stream()
                     .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / chunkSize))
                     .values();
-
-            Writer[] threads = new Writer[10];
+            
+            Writer[] threads = new Writer[result.size()];
             int i = 0;
             for (List<JSONObject> seriesL : result) {
-                System.out.println(seriesL.size());
                 threads[i] = new Writer(seriesL, dataType);
                 threads[i].start();
                 i++;
@@ -167,6 +166,8 @@ public class BulkWrite {
             String fileName = file.getName();
             String dataType = fileName.toLowerCase().contains("load") ? "load" : "average";
             BulkWrite.processHistoricalData(file.getAbsolutePath(), dataType);
+
+            file.delete();
         }
 
         // BulkWrite.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-00",
