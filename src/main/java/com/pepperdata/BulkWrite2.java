@@ -23,12 +23,12 @@ import com.uber.m3.promremoteclient.Prometheus.WriteRequest;
 import com.uber.m3.promremoteclient.Prometheus.Label;
 import com.uber.m3.promremoteclient.Prometheus.Sample;
 
-class Writer extends Thread {
+class Writer2 extends Thread {
     public Client client;
     public ArrayList<Label.Builder> labels;
     public Sample.Builder sample;
     
-    public Writer(Client client, ArrayList<Label.Builder> labels, Sample.Builder sample) {
+    public Writer2(Client client, ArrayList<Label.Builder> labels, Sample.Builder sample) {
         this.client = client;
         this.labels = labels;
         this.sample = sample;
@@ -87,7 +87,7 @@ public class BulkWrite2 {
 
     private static void processHistoricalData(Client client, String filePath, String dataType) {
         JSONParser jsonParser = new JSONParser();
-        
+
         try (FileReader reader = new FileReader(filePath)) {
 
             JSONArray allSeries = (JSONArray) jsonParser.parse(reader);
@@ -116,7 +116,7 @@ public class BulkWrite2 {
 
                     Sample.Builder sample = BulkWrite2.getSample(dTime, dValue);
 
-                    Writer task = new Writer(client, labels, sample);
+                    Writer2 task = new Writer2(client, labels, sample);
                     executor.execute(task);
                 }
 
