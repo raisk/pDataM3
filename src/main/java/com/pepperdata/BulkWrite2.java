@@ -86,7 +86,7 @@ public class BulkWrite2 {
         try (FileReader reader = new FileReader(filePath)) {
 
             JSONArray allSeries = (JSONArray) jsonParser.parse(reader);
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
             
             for (int i = 0; i < allSeries.size(); i++) {
                 JSONObject series = (JSONObject) allSeries.get(i);
@@ -152,14 +152,7 @@ public class BulkWrite2 {
             String dataType = fileName.toLowerCase().contains("load") ? "load" : "average";
             BulkWrite2.processHistoricalData(client, file.getAbsolutePath(), dataType);
 
-            // file.delete();
+            file.delete();
         }
-
-        // BulkWrite2.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-00",
-        // "load");
-        // BulkWrite2.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-01",
-        // "load");
-        // BulkWrite2.processHistoricalData("static/node.loadavgStat.fiveMinute-2022-06-26-02",
-        // "load");
     }
 }
